@@ -1,33 +1,37 @@
 from time import sleep
 from machine import Pin, PWM
 
+class Servo(object):
+    def __init__(self, pin: int=15, hz: int=50):
+        self._servo = PWM(Pin(pin),hz) 
+        
+    def writeAngle(self, pos):
+        if pos <= 0:
+            pos = 0
+        if pos >= 180:
+            pos = 180
+        pos_buffer=(pos/180)*(128-26)
+        self._servo.duty(int(pos_buffer)+26)
+        
+    def deinit(self):
+        self._servo.deinit()
+
 class ServoArm():
     def __init__(self) -> None:
-        self.max_duty=9000
-        self.min_duty=1000
-        self.horizontal_servo_pin = PWM(Pin(13))
-        self.vertical_servo_pin = PWM(Pin(12))
-        self.horizontal_servo_pin.freq(50)
-        self.vertical_servo_pin.freq(50)
+        self.horizontal_servo = Servo(pin=32)
+        self.vertical_servo = Servo(pin=33)
 
-    def set_vertical_servo(self, degrees):
-        if degrees > 180:
-            degrees=180
-        if degrees < 0:
-            degrees=0
-        new_duty=self.min_duty+(self.max_duty-self.min_duty)*(degrees/180)
-        self.vertical_servo_pin.duty_u16(int(new_duty))
+    def setVerticalServo(self, degrees):
+        self.vertical_servo.writeAngle(degrees)
 
-    def set_horizontal_servo(self, degrees):
-        if degrees > 180:
-            degrees=180
-        if degrees < 0:
-            degrees=0
-        new_duty=self.min_duty+(self.max_duty-self.min_duty)*(degrees/180)
-        self.horizontal_servo_pin.duty_u16(int(new_duty))
+    def setHorizontalServo(self, degrees):
+        self.horizontal_servo.writeAngle(degrees)
 
-    def test_horizontal_servo(self):
-        for degree in range(0,180,1):
+    def testHorizontal(self):
+        for degree in range(0,179,1):
             self.set_horizontal_servo(degree)
-            sleep(0.2)
             print("increasing -- "+str(degree))
+        sleep(2)
+        for degree in range(179,0,-1):
+            self.set_horizontal_servo(degree)
+            print("decreasing -- "+str(degree))
