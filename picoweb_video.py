@@ -37,6 +37,26 @@ HTTP/1.0 200 OK\r\n
   <body>
     <h1>Security Cam Video Feed</h1>
     <img src="/video" margin-top:100px; style="transform:rotate(180deg)"; />
+   <br>
+   <table class="tg">
+<tbody>
+  <tr>
+    <td class="tg-0lax"></td>
+    <td class="tg-0lax"><button class="btn" aria-label="Login Button" id="cam_up">Up</button></td>
+    <td class="tg-0lax"></td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"><button class="btn" aria-label="Login Button" id="cam_left">Left</button></td>
+    <td class="tg-0lax"></td>
+    <td class="tg-0lax"><button class="btn" aria-label="Login Button" id="cam_right">Right</button></td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"></td>
+    <td class="tg-0lax"><button class="btn" aria-label="Login Button" id="cam_down">Down</button></td>
+    <td class="tg-0lax"></td>
+  </tr>
+</tbody>
+</table>
   </body>
 </html>
 """
