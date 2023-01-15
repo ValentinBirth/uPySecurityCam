@@ -43,10 +43,10 @@ index_web="""
 HTTP/1.0 200 OK\r\n
 <html>
   <head>
-    <title>Video Streaming</title>
+    <title>Security Cam</title>
   </head>
   <body>
-    <h1>Video Streaming Demonstration</h1>
+    <h1>Security Cam Video Feed</h1>
     <img src="/video" margin-top:100px; style="transform:rotate(180deg)"; />
   </body>
 </html>
@@ -79,22 +79,4 @@ ROUTES = [
     ("/", index),
     ("/video", video),
 ]
-
-
-if __name__ == '__main__':
-    
-    import ulogging as logging
-    logging.basicConfig(level=logging.INFO)
-    camera_init()
-    wifi_connect()
-
-    #Create an app object that contains two decorators
-    app = picoweb.WebApp(__name__, ROUTES)
-    
-    app.run(debug=1, port=80, host="0.0.0.0")
-    # debug values:
-    # -1 disable all logging
-    # 0 (False) normal logging: requests and errors
-    # 1 (True) debug logging
-    # 2 extra debug logging
 
