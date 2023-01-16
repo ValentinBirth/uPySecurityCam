@@ -3,13 +3,16 @@ from machine import Pin, PWM
 
 class Servo(object):
     def __init__(self, pin: int=15, hz: int=50):
-        self._servo = PWM(Pin(pin),hz) 
+        self.position = 0
+        self._servo = PWM(Pin(pin),hz)
+        self.writeAngle(0) 
         
     def writeAngle(self, pos):
         if pos <= 0:
             pos = 0
         if pos >= 180:
             pos = 180
+        self.position = pos
         pos_buffer=(pos/180)*(128-26)
         self._servo.duty(int(pos_buffer)+26)
         
@@ -26,6 +29,12 @@ class ServoArm():
 
     def setHorizontalServo(self, degrees):
         self.horizontal_servo.writeAngle(degrees)
+
+    def addHorizontalServo(self):
+        self.horizontal_servo.writeAngle(self.horizontal_servo.position+5)
+
+    def addVerticalServo(self):
+        self.vertical_servo.writeAngle(self.vertical_servo.position+5)
 
     def testHorizontal(self):
         for degree in range(0,179,1):
