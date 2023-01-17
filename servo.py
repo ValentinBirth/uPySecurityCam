@@ -22,8 +22,8 @@ class Servo(object):
 
 class ServoArm():
     def __init__(self) -> None:
-        self.horizontal_servo = Servo(pin=32)
-        self.vertical_servo = Servo(pin=33, maxPos=90)
+        self.horizontal_servo = Servo(pin=33)
+        self.vertical_servo = Servo(pin=32, maxPos=90)
 
     def getServoPosition(self):
         return (self.horizontal_servo.position,self.vertical_servo.position)
@@ -35,10 +35,10 @@ class ServoArm():
         self.horizontal_servo.writeAngle(degrees)
 
     def addHorizontalServo(self):
-        self.horizontal_servo.writeAngle(self.horizontal_servo.position+5)
+        self.horizontal_servo.writeAngle(self.horizontal_servo.position+10)
 
     def addVerticalServo(self):
-        self.vertical_servo.writeAngle(self.vertical_servo.position+5)
+        self.vertical_servo.writeAngle(self.vertical_servo.position+10)
 
     def subtractHorizontalServo(self):
         self.horizontal_servo.writeAngle(self.horizontal_servo.position-5)

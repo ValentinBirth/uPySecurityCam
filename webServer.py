@@ -2,6 +2,7 @@ import picoweb
 import camera
 import gc
 import ulogging as logging
+from servo import ServoArm
 
 def camera_init():
   camera.deinit()
@@ -29,6 +30,8 @@ def camera_init():
 def runServer() -> None:
   logging.basicConfig(level=logging.INFO)
   camera_init()
+  global arm 
+  arm = ServoArm()
   app = picoweb.WebApp(__name__, ROUTES)
   app.run(debug=1, port=80, host="0.0.0.0")
   # debug values:
@@ -36,6 +39,14 @@ def runServer() -> None:
   # 0 (False) normal logging: requests and errors
   # 1 (True) debug logging
   # 2 extra debug logging
+
+def qs_parse(qs):
+  parameters = {}
+  qsSplited = qs.split("&")
+  for element in qsSplited:
+    equalSplit = element.split("=")
+    parameters[equalSplit[0]] = equalSplit[1]
+  return parameters
 
 # HTTP Response
 def index(req, resp):
@@ -55,10 +66,30 @@ def video(req, resp):
         yield from resp.awrite(next(send_frame()))
         gc.collect()
 
+def servoArm(req, resp):
+  queryString = req.qs 
+  parameters = qs_parse(queryString)
+  global arm
+  if "horizontal" in parameters:
+    if parameters["horizontal"] == "add":
+      print("a")
+      arm.addHorizontalServo()
+    else:
+      print("b")
+      arm.subtractHorizontalServo()
+  if "vertical" in parameters:
+    if parameters["vertical"] == "add":
+      print("c")
+      arm.addVerticalServo()
+    else:
+      print("d")
+      arm.subtractVerticalServo()
+
 ROUTES = [
   ("/", index),
   ("/video", video),
-]
+  ("/servoArm",servoArm)
+  ]
 
 
 index_web="""
@@ -140,13 +171,47 @@ HTTP/1.0 200 OK\r\n
         }
 
     </style>
+    <script>
+      function addHorizontal() {
+        let xhr = new XMLHttpRequest();
+        let url = "/servoArm?horizontal=add";
+        xhr.open("Get", url, true);
+        xhr.setRequestHeader('Content-type', 'application/json');
+        xhr.send();
+      }
+
+      function substractHorizontal() {
+        let xhr = new XMLHttpRequest();
+        let url = "/servoArm?horizontal=substract";
+        xhr.open("Get", url, true);
+        xhr.setRequestHeader('Content-type', 'application/json');
+        xhr.send();
+      }
+
+      function addVertical() {
+        let xhr = new XMLHttpRequest();
+        let url = "/servoArm?vertical=add";
+        xhr.open("Get", url, true);
+        xhr.setRequestHeader('Content-type', 'application/json');
+        xhr.send();
+      }
+
+      function subtractVertical() {
+        let xhr = new XMLHttpRequest();
+        let url = "/servoArm?vertical=subtract";
+        xhr.open("Get", url, true);
+        xhr.setRequestHeader('Content-type', 'application/json');
+        xhr.send();
+      }
+
+    </script>
   </head>
 
   <body>
     <div class="background" id="background">
       <h1 class="title">Security Cam Video Feed</h1>
       <div class="wrap" id="main-feed-wrap">
-        <img src="/video" margin-top:100px; style="transform:rotate(180deg)" ; />
+        <img src="/video" margin-top:100px; />
       </div>
       <br>
       <div class="wrap" id="main-camcontrol-wrap">
@@ -156,7 +221,7 @@ HTTP/1.0 200 OK\r\n
               <td class="tg-0lax"></td>
               <td class="tg-0lax">
                 <div class="btn-wraper" id="up-btn-wraper">
-                  <button class="btn" aria-label="Up Button" id="cam_up">Up</button>
+                  <button class="btn" aria-label="Up Button" id="cam_up" onclick="subtractVertical()">Up</button>
                 </div>
               </td>
               <td class="tg-0lax"></td>
@@ -164,13 +229,13 @@ HTTP/1.0 200 OK\r\n
             <tr>
               <td class="tg-0lax">
                 <div class="btn-wraper" id="left-btn-wraper">
-                  <button class="btn" aria-label="Left Button" id="cam_left">Left</button>
+                  <button class="btn" aria-label="Left Button" id="cam_left" onclick="addHorizontal()">Left</button>
                 </div>
               </td>
               <td class="tg-0lax"></td>
               <td class="tg-0lax">
                 <div class="btn-wraper" id="right-btn-wraper">
-                  <button class="btn" aria-label="Right Button" id="cam_right">Right</button>
+                  <button class="btn" aria-label="Right Button" id="cam_right" onclick="substractHorizontal()">Right</button>
                 </div>
               </td>
             </tr>
@@ -178,7 +243,7 @@ HTTP/1.0 200 OK\r\n
               <td class="tg-0lax"></td>
               <td class="tg-0lax">
                 <div class="btn-wraper" id="down-btn-wraper">
-                  <button class="btn" aria-label="Down Button" id="cam_down">Down</button>
+                  <button class="btn" aria-label="Down Button" id="cam_down" onclick="addVertical()">Down</button>
                 </div>
               </td>
               <td class="tg-0lax"></td>
