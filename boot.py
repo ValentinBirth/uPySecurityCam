@@ -14,7 +14,7 @@ def wifi_connect():
     start = utime.time()
     while not wlan.isconnected():
         utime.sleep(1)
-        if utime.time()-start > 5:
+        if utime.time()-start > 10:
             print("connect timeout!")
             break
     if wlan.isconnected():

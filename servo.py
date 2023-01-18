@@ -6,7 +6,6 @@ class Servo(object):
         self.position = 0
         self._servo = PWM(Pin(pin),hz)
         self.maxPose = maxPos
-        self.writeAngle(0) 
         
     def writeAngle(self, pos):
         if pos <= 0:
@@ -24,6 +23,8 @@ class ServoArm():
     def __init__(self) -> None:
         self.horizontal_servo = Servo(pin=33)
         self.vertical_servo = Servo(pin=32, maxPos=90)
+        self.setHorizontalServo(0)
+        self.setVerticalServo(0)
 
     def getServoPosition(self):
         return (self.horizontal_servo.position,self.vertical_servo.position)

@@ -164,6 +164,11 @@ HTTP/1.0 200 OK\r\n
             background: #2f2f2f;
             overflow: hidden;
         }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
     </style>
     <script>
         function addHorizontal() {
@@ -204,7 +209,7 @@ HTTP/1.0 200 OK\r\n
 <body>
     <div class="background" id="background">
         <div class="wrap" id="main-feed-wrap">
-            <img src="/video"/>
+            <img class="img" src="/video"/>
         </div>
         <br>
         <div class="wrap" id="main-camcontrol-wrap">
