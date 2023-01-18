@@ -4,95 +4,108 @@ import gc
 import ulogging as logging
 from servo import ServoArm
 
-def camera_init():
-  camera.deinit()
-  camera.init(0, d0=4, d1=5, d2=18, d3=19, d4=36, d5=39, d6=34, d7=35,
-              format=camera.JPEG, framesize=camera.FRAME_VGA, 
-              xclk_freq=camera.XCLK_20MHz,
-              href=23, vsync=25, reset=-1, pwdn=-1,
-              sioc=27, siod=26, xclk=21, pclk=22, fb_location=camera.PSRAM)
 
-  camera.framesize(camera.FRAME_VGA)
-  # The options are the following:
-  # FRAME_96X96 FRAME_QQVGA FRAME_QCIF FRAME_HQVGA FRAME_240X240
-  # FRAME_QVGA FRAME_CIF FRAME_HVGA FRAME_VGA FRAME_SVGA
-  # FRAME_XGA FRAME_HD FRAME_SXGA FRAME_UXGA
-  
-  camera.flip(1)                       # Flip up and down window: 0-1
-  camera.mirror(1)                     # Flip window left and right: 0-1
-  camera.saturation(0)                 # saturation: -2,2 (default 0). -2 grayscale 
-  camera.brightness(0)                 # brightness: -2,2 (default 0). 2 brightness
-  camera.contrast(0)                   # contrast: -2,2 (default 0). 2 highcontrast
-  camera.quality(10)                   # quality: # 10-63 lower number means higher quality    
-  camera.speffect(camera.EFFECT_NONE)
-  camera.whitebalance(camera.WB_NONE)
+def camera_init():
+    camera.deinit()
+    camera.init(0, d0=4, d1=5, d2=18, d3=19, d4=36, d5=39, d6=34, d7=35,
+                format=camera.JPEG, framesize=camera.FRAME_VGA,
+                xclk_freq=camera.XCLK_20MHz,
+                href=23, vsync=25, reset=-1, pwdn=-1,
+                sioc=27, siod=26, xclk=21, pclk=22, fb_location=camera.PSRAM)
+
+    camera.framesize(camera.FRAME_VGA)
+    # The options are the following:
+    # FRAME_96X96 FRAME_QQVGA FRAME_QCIF FRAME_HQVGA FRAME_240X240
+    # FRAME_QVGA FRAME_CIF FRAME_HVGA FRAME_VGA FRAME_SVGA
+    # FRAME_XGA FRAME_HD FRAME_SXGA FRAME_UXGA
+
+    camera.flip(1)                       # Flip up and down window: 0-1
+    camera.mirror(1)                     # Flip window left and right: 0-1
+    # saturation: -2,2 (default 0). -2 grayscale
+    camera.saturation(0)
+    # brightness: -2,2 (default 0). 2 brightness
+    camera.brightness(0)
+    # contrast: -2,2 (default 0). 2 highcontrast
+    camera.contrast(0)
+    # quality: # 10-63 lower number means higher quality
+    camera.quality(10)
+    camera.speffect(camera.EFFECT_NONE)
+    camera.whitebalance(camera.WB_NONE)
+
 
 def runServer() -> None:
-  logging.basicConfig(level=logging.INFO)
-  camera_init()
-  global arm 
-  arm = ServoArm()
-  app = picoweb.WebApp(__name__, ROUTES)
-  app.run(debug=1, port=80, host="0.0.0.0")
-  # debug values:
-  # -1 disable all logging
-  # 0 (False) normal logging: requests and errors
-  # 1 (True) debug logging
-  # 2 extra debug logging
+    logging.basicConfig(level=logging.INFO)
+    camera_init()
+    global arm
+    arm = ServoArm()
+    app = picoweb.WebApp(__name__, ROUTES)
+    app.run(debug=1, port=80, host="0.0.0.0")
+    # debug values:
+    # -1 disable all logging
+    # 0 (False) normal logging: requests and errors
+    # 1 (True) debug logging
+    # 2 extra debug logging
+
 
 def qs_parse(qs):
-  parameters = {}
-  qsSplited = qs.split("&")
-  for element in qsSplited:
-    equalSplit = element.split("=")
-    parameters[equalSplit[0]] = equalSplit[1]
-  return parameters
+    parameters = {}
+    qsSplited = qs.split("&")
+    for element in qsSplited:
+        equalSplit = element.split("=")
+        parameters[equalSplit[0]] = equalSplit[1]
+    return parameters
 
 # HTTP Response
+
+
 def index(req, resp):
     yield from resp.awrite(index_web)
+
 
 def send_frame():
     buf = camera.capture()
     yield (b'--frame\r\n'
-          b'Content-Type: image/jpeg\r\n\r\n'
-          + buf + b'\r\n')
+           b'Content-Type: image/jpeg\r\n\r\n'
+           + buf + b'\r\n')
     del buf
     gc.collect()
-        
+
+
 def video(req, resp):
     yield from picoweb.start_response(resp, content_type="multipart/x-mixed-replace; boundary=frame")
     while True:
         yield from resp.awrite(next(send_frame()))
         gc.collect()
 
+
 def servoArm(req, resp):
-  queryString = req.qs 
-  parameters = qs_parse(queryString)
-  global arm
-  if "horizontal" in parameters:
-    if parameters["horizontal"] == "add":
-      print("a")
-      arm.addHorizontalServo()
-    else:
-      print("b")
-      arm.subtractHorizontalServo()
-  if "vertical" in parameters:
-    if parameters["vertical"] == "add":
-      print("c")
-      arm.addVerticalServo()
-    else:
-      print("d")
-      arm.subtractVerticalServo()
+    queryString = req.qs
+    parameters = qs_parse(queryString)
+    global arm
+    if "horizontal" in parameters:
+        if parameters["horizontal"] == "add":
+            print("a")
+            arm.addHorizontalServo()
+        else:
+            print("b")
+            arm.subtractHorizontalServo()
+    if "vertical" in parameters:
+        if parameters["vertical"] == "add":
+            print("c")
+            arm.addVerticalServo()
+        else:
+            print("d")
+            arm.subtractVerticalServo()
+
 
 ROUTES = [
-  ("/", index),
-  ("/video", video),
-  ("/servoArm",servoArm)
-  ]
+    ("/", index),
+    ("/video", video),
+    ("/servoArm", servoArm)
+]
 
 
-index_web="""
+index_web = """
 HTTP/1.0 200 OK\r\n
 <html>
 

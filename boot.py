@@ -4,13 +4,15 @@ import network
 import machine
 import config
 
-def wifi_connect():
+
+def wifiConnect():
     import network
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     if not wlan.isconnected():
         print('connecting to network...')
-        wlan.connect(config.wifi_config["ssid"], config.wifi_config["password"]) 
+        wlan.connect(config.wifi_config["ssid"],
+                     config.wifi_config["password"])
     start = utime.time()
     while not wlan.isconnected():
         utime.sleep(1)
@@ -19,6 +21,7 @@ def wifi_connect():
             break
     if wlan.isconnected():
         print('network config:', wlan.ifconfig())
-        
-wifi_connect()
+
+
+wifiConnect()
 machine.freq(240000000)
