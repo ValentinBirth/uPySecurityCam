@@ -96,164 +96,160 @@ index_web="""
 HTTP/1.0 200 OK\r\n
 <html>
 
-  <head>
+<head>
     <title>Security Cam</title>
     <style>
-      body {
-        display: flex;
-        background: #2f2f2f;
-        justify-content: center;
-        align-content: center;
-        align-items: center;
-      }
-
-      .btn-wraper {
-        width: strech;
-        margin: 0 auto;
-        padding: 2px;
-        display: block;
-        position: relative;
-        border-radius: 25px;
-        background-color: #52b7f8;
-        text-align: center
-      }
-
-      .btn {
-        width: strech;
-        padding: 5px;
-        border: none;
-        outline: none;
-        line-height: 1.2;
-        text-transform: uppercase;
-        text-align: center;
-        align-items: center;
-        font-family: Poppins-Medium;
-        font-size: 1em;
-        color: #393939;
-        background-color: transparent;
-        cursor: pointer;
-      }
-
-      .wrap {
-        min-width: fit-content;
-        min-height: fit-content;
-        overflow: hidden;
-        position: relative;
-        background: #393939;
-        border-radius: 10px;
-        padding: 10px;
-        border: #52b7f8 solid 5px;
-        color: #52b7f8;
-        font-family: Poppins-Regular;
-        font-size: 1em;
-        line-height: 1.2;
-        box-shadow: 0 5px 10px 0px rgb(0 0 0 / 10%);
-      }
-
-      .background {
-        width: 90vw;
-        height: 90vh;
-        display: flex;
-        flex-wrap: nowrap;
-        flex-direction: column;
-        justify-content: center;
-        align-content: center;
-        align-items: center;
-        background: #2f2f2f;
-        overflow: hidden;
-
-        .title {
-          display: block;
-          padding-bottom: 5px;
-          padding-top: 5px;
-          text-align: center;
-          font-size: 2em;
+        body {
+            display: flex;
+            background: #2f2f2f;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
         }
 
+        .btn-wraper {
+            width: strech;
+            margin: 0 auto;
+            padding: 2px;
+            display: block;
+            position: relative;
+            border-radius: 25px;
+            background-color: #52b7f8;
+            text-align: center
+        }
+
+        .btn {
+            width: strech;
+            padding: 5px;
+            border: none;
+            outline: none;
+            line-height: 1.2;
+            text-transform: uppercase;
+            text-align: center;
+            align-items: center;
+            font-family: Poppins-Medium;
+            font-size: 1em;
+            color: #393939;
+            background-color: transparent;
+            cursor: pointer;
+        }
+
+        .wrap {
+            min-width: fit-content;
+            min-height: fit-content;
+            max-width: fit-content;
+            max-height: fit-content;
+            overflow: hidden;
+            position: relative;
+            background: #393939;
+            border-radius: 10px;
+            padding: 10px;
+            border: #52b7f8 solid 5px;
+            color: #52b7f8;
+            font-family: Poppins-Regular;
+            font-size: 1em;
+            line-height: 1.2;
+            box-shadow: 0 5px 10px 0px rgb(0 0 0 / 10%);
+        }
+
+        .background {
+            width: 90vw;
+            height: 90vh;
+            display: flex;
+            flex-wrap: nowrap;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
+            background: #2f2f2f;
+            overflow: hidden;
+        }
     </style>
     <script>
-      function addHorizontal() {
-        let xhr = new XMLHttpRequest();
-        let url = "/servoArm?horizontal=add";
-        xhr.open("Get", url, true);
-        xhr.setRequestHeader('Content-type', 'application/json');
-        xhr.send();
-      }
+        function addHorizontal() {
+            let xhr = new XMLHttpRequest();
+            let url = "/servoArm?horizontal=add";
+            xhr.open("Get", url, true);
+            xhr.setRequestHeader('Content-type', 'application/json');
+            xhr.send();
+        }
 
-      function substractHorizontal() {
-        let xhr = new XMLHttpRequest();
-        let url = "/servoArm?horizontal=substract";
-        xhr.open("Get", url, true);
-        xhr.setRequestHeader('Content-type', 'application/json');
-        xhr.send();
-      }
+        function substractHorizontal() {
+            let xhr = new XMLHttpRequest();
+            let url = "/servoArm?horizontal=substract";
+            xhr.open("Get", url, true);
+            xhr.setRequestHeader('Content-type', 'application/json');
+            xhr.send();
+        }
 
-      function addVertical() {
-        let xhr = new XMLHttpRequest();
-        let url = "/servoArm?vertical=add";
-        xhr.open("Get", url, true);
-        xhr.setRequestHeader('Content-type', 'application/json');
-        xhr.send();
-      }
+        function addVertical() {
+            let xhr = new XMLHttpRequest();
+            let url = "/servoArm?vertical=add";
+            xhr.open("Get", url, true);
+            xhr.setRequestHeader('Content-type', 'application/json');
+            xhr.send();
+        }
 
-      function subtractVertical() {
-        let xhr = new XMLHttpRequest();
-        let url = "/servoArm?vertical=subtract";
-        xhr.open("Get", url, true);
-        xhr.setRequestHeader('Content-type', 'application/json');
-        xhr.send();
-      }
+        function subtractVertical() {
+            let xhr = new XMLHttpRequest();
+            let url = "/servoArm?vertical=subtract";
+            xhr.open("Get", url, true);
+            xhr.setRequestHeader('Content-type', 'application/json');
+            xhr.send();
+        }
 
     </script>
-  </head>
+</head>
 
-  <body>
+<body>
     <div class="background" id="background">
-      <h1 class="title">Security Cam Video Feed</h1>
-      <div class="wrap" id="main-feed-wrap">
-        <img src="/video" margin-top:100px; />
-      </div>
-      <br>
-      <div class="wrap" id="main-camcontrol-wrap">
-        <table class="tg">
-          <tbody>
-            <tr>
-              <td class="tg-0lax"></td>
-              <td class="tg-0lax">
-                <div class="btn-wraper" id="up-btn-wraper">
-                  <button class="btn" aria-label="Up Button" id="cam_up" onclick="subtractVertical()">Up</button>
-                </div>
-              </td>
-              <td class="tg-0lax"></td>
-            </tr>
-            <tr>
-              <td class="tg-0lax">
-                <div class="btn-wraper" id="left-btn-wraper">
-                  <button class="btn" aria-label="Left Button" id="cam_left" onclick="addHorizontal()">Left</button>
-                </div>
-              </td>
-              <td class="tg-0lax"></td>
-              <td class="tg-0lax">
-                <div class="btn-wraper" id="right-btn-wraper">
-                  <button class="btn" aria-label="Right Button" id="cam_right" onclick="substractHorizontal()">Right</button>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td class="tg-0lax"></td>
-              <td class="tg-0lax">
-                <div class="btn-wraper" id="down-btn-wraper">
-                  <button class="btn" aria-label="Down Button" id="cam_down" onclick="addVertical()">Down</button>
-                </div>
-              </td>
-              <td class="tg-0lax"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <div class="wrap" id="main-feed-wrap">
+            <img src="/video"/>
+        </div>
+        <br>
+        <div class="wrap" id="main-camcontrol-wrap">
+            <table class="tg">
+                <tbody>
+                    <tr>
+                        <td class="tg-0lax"></td>
+                        <td class="tg-0lax">
+                            <div class="btn-wraper" id="up-btn-wraper">
+                                <button class="btn" aria-label="Up Button" id="cam_up"
+                                    onclick="subtractVertical()">Up</button>
+                            </div>
+                        </td>
+                        <td class="tg-0lax"></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0lax">
+                            <div class="btn-wraper" id="left-btn-wraper">
+                                <button class="btn" aria-label="Left Button" id="cam_left"
+                                    onclick="addHorizontal()">Left</button>
+                            </div>
+                        </td>
+                        <td class="tg-0lax"></td>
+                        <td class="tg-0lax">
+                            <div class="btn-wraper" id="right-btn-wraper">
+                                <button class="btn" aria-label="Right Button" id="cam_right"
+                                    onclick="substractHorizontal()">Right</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0lax"></td>
+                        <td class="tg-0lax">
+                            <div class="btn-wraper" id="down-btn-wraper">
+                                <button class="btn" aria-label="Down Button" id="cam_down"
+                                    onclick="addVertical()">Down</button>
+                            </div>
+                        </td>
+                        <td class="tg-0lax"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-  </body>
+</body>
 
 </html>
-
 """
