@@ -44,10 +44,10 @@ class ServoArm():
         self.vertical_servo.writeAngle(self.vertical_servo.position+10)
 
     def subtractHorizontalServo(self):
-        self.horizontal_servo.writeAngle(self.horizontal_servo.position-5)
+        self.horizontal_servo.writeAngle(self.horizontal_servo.position-10)
 
     def subtractVerticalServo(self):
-        self.vertical_servo.writeAngle(self.vertical_servo.position-5)
+        self.vertical_servo.writeAngle(self.vertical_servo.position-10)
 
     def testHorizontal(self):
         for degree in range(0, 179, 1):

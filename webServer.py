@@ -13,7 +13,7 @@ def camera_init():
                 href=23, vsync=25, reset=-1, pwdn=-1,
                 sioc=27, siod=26, xclk=21, pclk=22, fb_location=camera.PSRAM)
 
-    camera.framesize(camera.FRAME_VGA)
+    camera.framesize(camera.FRAME_240X240)
     # The options are the following:
     # FRAME_96X96 FRAME_QQVGA FRAME_QCIF FRAME_HQVGA FRAME_240X240
     # FRAME_QVGA FRAME_CIF FRAME_HVGA FRAME_VGA FRAME_SVGA
