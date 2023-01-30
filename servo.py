@@ -3,70 +3,59 @@ from machine import Pin, PWM
 
 
 class Servo(object):
+    """Object that implements the driver for the servo"""
     def __init__(self, pin: int = 15, hz: int = 50, maxPos: int = 180):
         self.position = 0
         self._servo = PWM(Pin(pin), hz)
-        self.maxPose = maxPos
+        self.max_pose = maxPos
 
-    def writeAngle(self, pos):
+    def write_angle(self, pos):
+        """Moves servo to the desired angle"""
         if pos <= 0:
             pos = 0
-        if pos >= self.maxPose:
-            pos = self.maxPose
+        if pos >= self.max_pose:
+            pos = self.max_pose
         self.position = pos
         pos_buffer = (pos/180)*(128-26)
         self._servo.duty(int(pos_buffer)+26)
 
     def deinit(self):
+        """Deinitialises the servo"""
         self._servo.deinit()
 
 
 class ServoArm():
+    """Object that implements the driver for the servo arm"""
     def __init__(self) -> None:
         self.horizontal_servo = Servo(pin=33)
         self.vertical_servo = Servo(pin=32, maxPos=90)
-        self.setHorizontalServo(0)
-        self.setVerticalServo(0)
+        self.set_horizontal_servo(0)
+        self.set_vertical_servo(0)
 
-    def getServoPosition(self):
+    def get_servo_position(self):
+        """Returns current position of the servos"""
         return (self.horizontal_servo.position, self.vertical_servo.position)
 
-    def setVerticalServo(self, degrees):
-        self.vertical_servo.writeAngle(degrees)
+    def set_vertical_servo(self, degrees):
+        """Sets the vertical Servo to desired angle"""
+        self.vertical_servo.write_angle(degrees)
 
-    def setHorizontalServo(self, degrees):
-        self.horizontal_servo.writeAngle(degrees)
+    def set_horizontal_servo(self, degrees):
+        """Sets the horizontal Servo to desired angle"""
+        self.horizontal_servo.write_angle(degrees)
 
-    def addHorizontalServo(self):
-        self.horizontal_servo.writeAngle(self.horizontal_servo.position+10)
+    def add_horizontal_servo(self):
+        """Moves horizontal servo by adding 10 degree to the current position"""
+        self.horizontal_servo.write_angle(self.horizontal_servo.position+10)
 
-    def addVerticalServo(self):
-        self.vertical_servo.writeAngle(self.vertical_servo.position+10)
+    def add_vertical_servo(self):
+        """Moves vertical servo by adding 10 degree to the current position"""
+        self.vertical_servo.write_angle(self.vertical_servo.position+10)
 
-    def subtractHorizontalServo(self):
-        self.horizontal_servo.writeAngle(self.horizontal_servo.position-10)
+    def subtract_horizontal_servo(self):
+        """Moves horizontal servo by subtracting 10 degree to the current position"""
+        self.horizontal_servo.write_angle(self.horizontal_servo.position-10)
 
-    def subtractVerticalServo(self):
-        self.vertical_servo.writeAngle(self.vertical_servo.position-10)
-
-    def testHorizontal(self):
-        for degree in range(0, 179, 1):
-            self.setHorizontalServo(degree)
-            print("increasing -- "+str(degree))
-        sleep(2)
-        for degree in range(179, 0, -1):
-            self.setHorizontalServo(degree)
-            print("decreasing -- "+str(degree))
-
-    def testVertical(self):
-        for degree in range(0, 89, 1):
-            self.setVerticalServo(degree)
-            print("increasing -- "+str(degree))
-        sleep(2)
-        for degree in range(89, 0, -1):
-            self.setVerticalServo(degree)
-            print("decreasing -- "+str(degree))
-
-    def testArm(self):
-        self.testHorizontal()
-        self.testVertical()
+    def subtract_vertical_servo(self):
+        """Moves vertical servo by adding 10 degree to the current position"""
+        self.vertical_servo.write_angle(self.vertical_servo.position-10)

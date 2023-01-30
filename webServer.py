@@ -1,11 +1,11 @@
+import gc
 import picoweb
 import camera
-import gc
 import ulogging as logging
 from servo import ServoArm
 
-
 def camera_init():
+    """Initialises the camera with given parameter"""
     camera.deinit()
     camera.init(0, d0=4, d1=5, d2=18, d3=19, d4=36, d5=39, d6=34, d7=35,
                 format=camera.JPEG, framesize=camera.FRAME_VGA,
@@ -33,11 +33,12 @@ def camera_init():
     camera.whitebalance(camera.WB_NONE)
 
 
-def runServer() -> None:
+def run_server() -> None:
+    """Initialises all neccescary modules for the webserver and starts it"""
     logging.basicConfig(level=logging.INFO)
     camera_init()
-    global arm
-    arm = ServoArm()
+    global ARM
+    ARM = ServoArm()
     app = picoweb.WebApp(__name__, ROUTES)
     app.run(debug=1, port=80, host="0.0.0.0")
     # debug values:
@@ -48,21 +49,20 @@ def runServer() -> None:
 
 
 def qs_parse(qs):
+    """Helper Method to parse HMTML queries"""
     parameters = {}
-    qsSplited = qs.split("&")
-    for element in qsSplited:
-        equalSplit = element.split("=")
-        parameters[equalSplit[0]] = equalSplit[1]
+    qs_splited = qs.split("&")
+    for element in qs_splited:
+        equal_split = element.split("=")
+        parameters[equal_split[0]] = equal_split[1]
     return parameters
 
-# HTTP Response
-
-
 def index(req, resp):
-    yield from resp.awrite(index_web)
-
+    """Gets the Homepage of the Webserver"""
+    yield from resp.awrite(INDEX_WEB)
 
 def send_frame():
+    """Captures a picture with the camera"""
     buf = camera.capture()
     yield (b'--frame\r\n'
            b'Content-Type: image/jpeg\r\n\r\n'
@@ -72,40 +72,42 @@ def send_frame():
 
 
 def video(req, resp):
+    """Sends continuous pictures of the camera to create the video feed"""
     yield from picoweb.start_response(resp, content_type="multipart/x-mixed-replace; boundary=frame")
     while True:
         yield from resp.awrite(next(send_frame()))
         gc.collect()
 
 
-def servoArm(req, resp):
-    queryString = req.qs
-    parameters = qs_parse(queryString)
-    global arm
+def servo_arm(req, resp):
+    """Sends instructions to the servo arm corresponding to the HTML queries"""
+    query_string = req.qs
+    parameters = qs_parse(query_string)
+    global ARM
     if "horizontal" in parameters:
         if parameters["horizontal"] == "add":
             print("a")
-            arm.addHorizontalServo()
+            ARM.add_horizontal_servo()
         else:
             print("b")
-            arm.subtractHorizontalServo()
+            ARM.subtract_horizontal_servo()
     if "vertical" in parameters:
         if parameters["vertical"] == "add":
             print("c")
-            arm.addVerticalServo()
+            ARM.add_vertical_servo()
         else:
             print("d")
-            arm.subtractVerticalServo()
+            ARM.subtract_vertical_servo()
 
 
 ROUTES = [
     ("/", index),
     ("/video", video),
-    ("/servoArm", servoArm)
+    ("/servoArm", servo_arm)
 ]
 
 
-index_web = """
+INDEX_WEB = """
 HTTP/1.0 200 OK\r\n
 <html>
 

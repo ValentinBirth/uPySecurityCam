@@ -5,7 +5,8 @@ import machine
 import config
 
 
-def wifiConnect():
+def wifi_connect():
+    """Connects to WIFI Network given in config.py"""
     import network
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
@@ -23,5 +24,5 @@ def wifiConnect():
         print('network config:', wlan.ifconfig())
 
 
-wifiConnect()
+wifi_connect()
 machine.freq(240000000)
